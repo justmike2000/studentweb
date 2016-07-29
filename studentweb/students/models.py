@@ -5,12 +5,32 @@ class Student(models.Model):
     """ Student Django Model
         - Represents a student (Sally Salt)
     """
-    name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     email = models.EmailField()
+
+    @property
+    def name(self):
+       """Property that returns first_name + last_name"""
+       return "%s %s" % (self.first_name, self.last_name,)
+
+    @property
+    def average_gpa(self):
+        """Property that returns average gpa for student"""
+        average = 0.0
+        semesters = Semester.objects.filter(student_class=self.id).all()
+
+        if not semesters:
+            return 0
+
+        for semester in semesters:
+            average += semester.grade
+
+        return average / len(semesters)
 
     def __unicode__(self):
         """ Returns a unicode representation of this class"""
-        return "%d %s %s" % (self.id, self.name, self.email,)
+        return "%d %s %s %s" % (self.id, self.first_name, self.last_name, self.email,)
 
     def my_classes(self):
         """ Returns a list of classes and grades for a student"""
@@ -24,12 +44,8 @@ class Student(models.Model):
         student_dict = {}
         student_dict["studentClasses"] = self.my_classes()
         student_dict["email"] = self.email
-        split_name = self.name.split(" ")
-        student_dict["first"] = split_name[0]
-        try:
-            student_dict["last"] = split_name[-1]
-        except IndexError:
-            pass
+        student_dict["first"] = self.first_name
+        student_dict["last"] = self.last_name
 
         return student_dict
 
