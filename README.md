@@ -17,7 +17,7 @@ Python Django app which Keeps tracks of students/classes and their grades.
 
 ## Installation with new database
     pip install -r requirements.txt
-    cd studentweb
+    cd app
     python manage.py syncdb
 
 ## Running

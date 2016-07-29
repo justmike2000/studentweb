@@ -7,19 +7,33 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script>
-$( document ).ready(function() {
+
+function JSONToTable(obj, tablename) {
+    $.each(obj, function(index, element) {
+        row = '<tr>'
+        row += '<td>' + element.first;
+        row += ' ' + element.last + '</td>';
+        row += '<td>' + element.email + '</td>';
+        row += '</tr>'
+        $(tablename + ' tr:last').after(row);
+    });
+}
+
+function studentrow() { 
+
+}
+
+function loadStudents() {
 	$.get( "/students", function( data ) {
 		var students = $.parseJSON(data);
-		$.each(students.students, function(index, element) {
-                    row = '<tr>'
-                    row += '<td>' + element.first;
-                    row += ' ' + element.last + '</td>';
-                    row += '<td>' + element.email + '</td>';
-                    row += '</tr>'
-                    $('#studentTable tr:last').after(row);
-		});
+	        JSONToTable(students.students, "#studentTable", studentrow);
 	});
+}
+
+$( document ).ready(function() {
+	loadStudents();
 });
+
 </script>
 
 </head>
