@@ -10,7 +10,7 @@ Python 2.7+
 See requirements.txt for package dependencies
 
 ## Description
-Python Django app which Keeps tracks of students/classes and their grades.
+Python Django app which keeps tracks of students/classes and their grades.
 
 ## Installation
     pip install -r requirements.txt
