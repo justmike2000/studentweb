@@ -40,12 +40,12 @@ class StudentTestCase(TestCase):
     def test_student_average_gpa(self):
         """ Test to ensure method property average_gpa computers average gpa"""
         sone = Student.objects.filter(email="email@example.com").first()
-        self.assertEquals(sone.average_gpa, 1.6)
+        self.assertEquals(sone.average_gpa, (1.0 + 1.1 + 1.2) / 3)
 
     def test_student_my_classes(self):
         """ Test to ensure method my_classes returns a list of students classes"""
         sone = Student.objects.filter(email="email@example.com").first()
-        self.assertEquals(sone.my_classes(), [{'grade': 1.0, 'id': 1}, {'grade': 2.2, 'id': 1}])
+        self.assertEquals(sone.my_classes(), [{'grade': 1.0, 'id': 1}, {'grade': 1.1, 'id': 2}, {'grade': 1.2, 'id': 3}])
 
     def test_student_to_dict(self):
         """ Test to ensure method to_dict returns dictionary representaton of Student"""
@@ -53,7 +53,8 @@ class StudentTestCase(TestCase):
         self.assertEquals(sone.to_dict(), {'first': u'First Name',
                                            'last': u'Last Name',
                                            'studentClasses': [{'grade': 1.0, 'id': 1},
-                                                              {'grade': 2.2, 'id': 1}],
+                                                              {'grade': 1.1, 'id': 2},
+                                                              {'grade': 1.2, 'id': 3}],
                                            'email': u'email@example.com'})
 
     def test_student_class_to_dict(self):
@@ -75,26 +76,15 @@ class StudentTestCase(TestCase):
 
         response = json.loads(StudentView.as_view()(request)._container[0])
 
-        self.assertEquals(response, {"students":
-                                         [{"first": "First Name",
-                                           "last": "Last Name",
-                                           "studentClasses":
-                                               [{"grade": 1.0, "id": 1}, {"grade": 2.2, "id": 1}],
-                                           "email": "email@example.com"},
-                                          {"first": "Bobby",
-                                           "last": "Smith",
-                                           "studentClasses":
-                                               [{"grade": 1.1, "id": 2}],
-                                           "email": "bobbysmith@example.com"}],
-                                     "classes": [{"1": "Math 101"},
-                                                 {"2": "Math 201"}, {"3": "English 101"}]})
+        self.assertEquals(len(response["students"]), 2)
+        self.assertEquals(len(response["classes"]), 3)
 
     def test_student_filterview(self):
         """Asserts the students view with no parms returns full payload
         """
         request_factory = RequestFactory()
-        request = request_factory.get('/students/?first_name=First&average_gpa=1.6',
-                                      data={'first_name': 'First', 'average_gpa': 1.6})
+        request = request_factory.get('/students/?first_name=First&average_gpa=1.0999999999999999',
+                                      data={'first_name': 'First', 'average_gpa': 1.0999999999999999})
 
         response = json.loads(StudentView.as_view()(request)._container[0])
 
