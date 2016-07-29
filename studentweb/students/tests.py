@@ -1,6 +1,10 @@
+from django.test import RequestFactory
 from django.test import TestCase
 
+import json
+
 from models import (Student, StudentClass, Semester)
+from views import StudentView
 
 class StudentTestCase(TestCase):
 
@@ -24,29 +28,25 @@ class StudentTestCase(TestCase):
         Semester.objects.create(grade=2.3, student=s2, student_class=c3)
 
     def test_student_name_property(self):
-        """Test to ensure method property first name properly adds first_name and last_name
-        """    
+        """ Test to ensure method property first name properly adds first_name and last_name"""
         s = Student.objects.filter(email="email@example.com").first()
        
         self.assertEquals(s.name, "First Name Last Name")
 
     def test_student_average_gpa(self):
-        """Test to ensure method property average_gpa computers average gpa
-        """    
+        """ Test to ensure method property average_gpa computers average gpa"""
         s = Student.objects.filter(email="email@example.com").first()
        
         self.assertEquals(s.average_gpa, 1.6)
 
     def test_student_my_classes(self):
-        """Test to ensure method my_classes returns a list of students classes
-        """    
+        """ Test to ensure method my_classes returns a list of students classes"""
         s = Student.objects.filter(email="email@example.com").first()
 
         self.assertEquals(s.my_classes(), [{'grade': 1.0, 'id': 1}, {'grade': 2.2, 'id': 1}])
 
     def test_student_to_dict(self):
-        """Test to ensure method to_dict returns dictionary representaton of Student
-        """    
+        """ Test to ensure method to_dict returns dictionary representaton of Student"""
         s = Student.objects.filter(email="email@example.com").first()
 
         self.assertEquals(s.to_dict(), {'first': u'First Name',
@@ -56,16 +56,35 @@ class StudentTestCase(TestCase):
                                         'email': u'email@example.com'})
 
     def test_student_class_to_dict(self):
-        """Test to ensure method to_dict returns dictionary representaton of StudentClass
-        """    
+        """ Test to ensure method to_dict returns dictionary representaton of StudentClass"""
         c1 = StudentClass.objects.filter(description="Math 101").first()
 
         self.assertEquals(c1.to_dict(), {'1': u'Math 101'})
 
     def test_semester_to_dict(self):
-        """Test to ensure method to_dict returns dictionary representaton of SemesterClass
-        """    
+        """ Test to ensure method to_dict returns dictionary representaton of SemesterClass"""
         s = Student.objects.filter(email="email@example.com").first()
         s1 = Semester.objects.filter(grade=1.0, student=s).first()
 
         self.assertEquals(s1.to_dict(), {'grade': 1.0, 'id': 1})
+
+    def test_student_get_request_all(self):
+        """
+        """
+        request_factory = RequestFactory()
+        request = request_factory.get('/students/')
+
+        response = json.loads(StudentView.as_view()(request)._container[0])
+      
+        self.assertEquals(response, {"students":
+                                         [{"first": "First Name",
+                                           "last": "Last Name",
+                                           "studentClasses":
+                                               [{"grade": 1.0, "id": 1}, {"grade": 2.2, "id": 1}],
+                                           "email": "email@example.com"},
+                                          {"first": "Bobby",
+                                           "last": "Smith",
+                                           "studentClasses":
+                                               [{"grade": 1.1, "id": 2}],
+                                           "email": "bobbysmith@example.com"}],
+                                     "classes": [{"1": "Math 101"}, {"2": "Math 201"}, {"3": "English 101"}]})
