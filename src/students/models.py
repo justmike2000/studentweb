@@ -22,7 +22,7 @@ class Student(models.Model):
     def average_gpa(self):
         """ Property that returns average gpa for student"""
         average = 0.0
-        semesters = Semester.objects.filter(student_class=self.id).all()
+        semesters = Semester.objects.filter(student=self.id).all()
 
         if not semesters:
             return 0.0
@@ -39,7 +39,7 @@ class Student(models.Model):
     def my_classes(self):
         """ Returns a list of classes and grades for a student"""
         classes = []
-        for semester in Semester.objects.filter(student_class=self.id).all():
+        for semester in Semester.objects.filter(student=self.id).all():
             classes.append(semester.to_dict())
         return classes
 
