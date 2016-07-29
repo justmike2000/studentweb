@@ -4,35 +4,110 @@
 
 <title>Student Web!</title>
 
+<style>
+
+td {
+	vertical-align: text-top;
+}
+
+</style>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script>
 
-function JSONToTable(obj, tablename) {
-    $.each(obj, function(index, element) {
-        row = '<tr>'
-        row += '<td>' + element.first;
-        row += ' ' + element.last + '</td>';
-        row += '<td>' + element.email + '</td>';
-        row += '</tr>'
-        $(tablename + ' tr:last').after(row);
-    });
-}
 
-function studentrow() { 
+$( document ).ready(function() {
+	/*
+	Method that triggers when DOM is loaded.
 
-}
+	- Renders our table and sets up callback events for our filter inputs
+	*/
 
-function loadStudents() {
-	$.get( "/students", function( data ) {
-		var students = $.parseJSON(data);
-	        JSONToTable(students.students, "#studentTable", studentrow);
+	var filters = new filter();
+        filters.first = '';
+        filters.last = '';
+        filters.average_gpa = undefined;
+
+	loadStudents(filters);
+
+	$( "#first" ).on('input', function(data) {
+		value = (data.target.value);
+                filters.first = value;
+		loadStudents(filters);
+	});
+	$( "#last" ).on('input', function(data) {
+		value = (data.target.value);
+                filters.last = value;
+		loadStudents(filters);
+	});
+	$( "#average_gpa" ).on('input', function(data) {
+		value = parseFloat(data.target.value);
+                filters.average_gpa = value;
+		loadStudents(filters);
+	});
+});
+
+var classes = {}; // Classes Dict to map out studentClasses to Classes
+var filter = class {}; // Class used to hold filtering state
+
+function populateClasses(data) {
+	/*
+	Populates Class Dict
+	*/
+	$.each(data, function(index, element) {
+        	$.each(element, function(i, e) {
+			classes[i] = e;
+		});
 	});
 }
 
-$( document ).ready(function() {
-	loadStudents();
-});
+function JSONToTable(obj, tablename, rowfunc) {
+	/*
+	JSONToTable takes a obj (dict), tablename (string), and rowfunc (function pointer).
+	Appends rows to table from dictionary.
+	Uses rowfunc to customize row display.
+	*/
+	$(tablename).html('<tr></tr>');
+	$.each(obj, function(index, element) {
+	    row = '<tr>'
+	    row += rowfunc(element);
+	    row += '</tr>'
+	    $(tablename + ' tr:last').after(row);
+	});
+}
+
+function studentrow(element) { 
+	/* 
+	Builds <td> rowstring
+	*/
+	row = ''
+        row += '<td>' + element.first;
+        row += ' ' + element.last + '</td>';
+	row += '<td>' + element.email + '</td>';
+        row += '<td>'
+        $.each(element.studentClasses, function(index, sclass) {
+        	row += classes[sclass.id] + ': ' + sclass.grade + '<br>';
+        });
+        row += '<td>'
+        return row
+}
+
+function loadStudents(filters) {
+	/*
+	Steps through response from HTTP GET /students and popualte table
+	*/
+        params = "?first=" + filters.first;
+        params += "&last=" + filters.last;
+        if (filters.average_gpa != undefined) {
+            params += "&average_gpa=" + filters.average_gpa;
+	}
+	$.get( "/students/"+ params, function( data ) {
+		var studentdata = $.parseJSON(data);
+                populateClasses(studentdata.classes);
+	        JSONToTable(studentdata.students, "#studentTable", studentrow);
+	});
+}
 
 </script>
 
@@ -42,14 +117,14 @@ $( document ).ready(function() {
 
 <h1>Student Web Search</h1>
 
-Filters: First Name <input name="first">
-Last Name <input name="Last">
-Average GPA <input type="number" step="0.01" name="average_gpa">
+Filters: First Name <input id="first" name="first">
+Last Name <input id="last" name="Last">
+Average GPA <input id="average_gpa" type="number" step="0.01" name="average_gpa">
 
 <hr>
 
-<table id="studentTable" border=1>
-<tr></tr>
+<table id="studentTable" border=0 cellspaing="10" cellpadding="10">
+<tr><td>Loading...</td></tr>
 </table>
 
 </body>
