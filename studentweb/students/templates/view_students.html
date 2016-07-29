@@ -1,1 +1,43 @@
-<h1>Hello!</h2>
+<html>
+
+<head>
+
+<title>Student Web!</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script>
+$( document ).ready(function() {
+	$.get( "/students", function( data ) {
+		var students = $.parseJSON(data);
+		$.each(students.students, function(index, element) {
+                    row = '<tr>'
+                    row += '<td>' + element.first;
+                    row += ' ' + element.last + '</td>';
+                    row += '<td>' + element.email + '</td>';
+                    row += '</tr>'
+                    $('#studentTable tr:last').after(row);
+		});
+	});
+});
+</script>
+
+</head>
+
+<body>
+
+<h1>Student Web Search</h1>
+
+Filters: First Name <input name="first">
+Last Name <input name="Last">
+Average GPA <input type="number" step="0.01" name="average_gpa">
+
+<hr>
+
+<table id="studentTable" border=1>
+<tr></tr>
+</table>
+
+</body>
+
+</html>
