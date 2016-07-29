@@ -69,7 +69,7 @@ class StudentTestCase(TestCase):
         self.assertEquals(s1.to_dict(), {'grade': 1.0, 'id': 1})
 
     def test_student_get_request_all(self):
-        """
+        """Asserts the students view with no parms returns full payload
         """
         request_factory = RequestFactory()
         request = request_factory.get('/students/')
@@ -88,3 +88,14 @@ class StudentTestCase(TestCase):
                                                [{"grade": 1.1, "id": 2}],
                                            "email": "bobbysmith@example.com"}],
                                      "classes": [{"1": "Math 101"}, {"2": "Math 201"}, {"3": "English 101"}]})
+
+    def test_student_get_request_first_name_gpa(self):
+        """Asserts the students view with no parms returns full payload
+        """
+        request_factory = RequestFactory()
+        request = request_factory.get('/students/?first_name=First&average_gpa=1.6', data={'first_name': 'First', 'average_gpa': 1.6})
+
+        response = json.loads(StudentView.as_view()(request)._container[0])
+
+        self.assertEquals(len(response["students"]), 1)
+        self.assertEquals(response["students"][0]["first"], "First Name")
