@@ -25,7 +25,7 @@ class Student(models.Model):
         semesters = Semester.objects.filter(student_class=self.id).all()
 
         if not semesters:
-            return 0
+            return 0.0
 
         for semester in semesters:
             average += semester.grade
