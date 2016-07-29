@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""Example Google style docstrings.
+"""
+
 from django.db import models
 
 
@@ -11,12 +15,12 @@ class Student(models.Model):
 
     @property
     def name(self):
-       """Property that returns first_name + last_name"""
-       return "%s %s" % (self.first_name, self.last_name,)
+        """ Property that returns first_name + last_name"""
+        return "%s %s" % (self.first_name, self.last_name,)
 
     @property
     def average_gpa(self):
-        """Property that returns average gpa for student"""
+        """ Property that returns average gpa for student"""
         average = 0.0
         semesters = Semester.objects.filter(student_class=self.id).all()
 
@@ -36,7 +40,7 @@ class Student(models.Model):
         """ Returns a list of classes and grades for a student"""
         classes = []
         for semester in Semester.objects.filter(student_class=self.id).all():
-             classes.append(semester.to_dict())
+            classes.append(semester.to_dict())
         return classes
 
     def to_dict(self):
@@ -52,7 +56,7 @@ class Student(models.Model):
 
 class StudentClass(models.Model):
     """ StudentClass Django Model
-        - Identifies a student class (i.e. Math 101) 
+        - Identifies a student class (i.e. Math 101)
     """
     description = models.CharField(max_length=255)
 
@@ -67,7 +71,7 @@ class StudentClass(models.Model):
 
 class Semester(models.Model):
     """ Semester Django Model
-        - Represents a relation between student and class (i.e. Sally Salt with a 2.0 grade) 
+        - Represents a relation between student and class (i.e. Sally Salt with a 2.0 grade)
     """
     student = models.ForeignKey(Student)
     student_class = models.ForeignKey(StudentClass)
@@ -81,6 +85,9 @@ class Semester(models.Model):
         """ Returns a dictionary representation of this class"""
         return {"id": self.student_class.id, "grade": self.grade}
 
-    def __unicode__(self): 
+    def __unicode__(self):
         """ Returns a unicode representation of this class"""
-        return "%d %s %s %d" % (self.id, self.student.name, self.student_class.description, self.grade)
+        return "%d %s %s %d" % (self.id,
+                                self.student.name,
+                                self.student_class.description,
+                                self.grade)
