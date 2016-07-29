@@ -1,10 +1,12 @@
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.views.generic import View
+# -*- coding: utf-8 -*-
+"""Views for students Django App
+"""
 
 import json
+from django.http import HttpResponse
+from django.views.generic import View
 
-from models import (Student, StudentClass)
+from students.models import (Student, StudentClass)
 
 
 def index(request):
@@ -15,13 +17,13 @@ def index(request):
 
 class StudentView(View):
     """ StudentView View
-        We only defined a get request method here. 
+        We only defined a get request method here.
         We can expand on this and build a full RESTful view.
     """
 
     def get(self, request):
         """ Get method for students endpoint
-            - parameters 
+            - parameters
                 first: Filter by first name
                 last: Filter by last name
                 average_gpa: Filter by average gpa

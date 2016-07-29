@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Example Google style docstrings.
+"""Django Models Mapper for students Django App
 """
 
 from django.db import models
