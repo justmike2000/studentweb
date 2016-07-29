@@ -99,7 +99,7 @@ function loadStudents(filters) {
 	*/
         params = "?first=" + filters.first;
         params += "&last=" + filters.last;
-        if (filters.average_gpa != undefined) {
+        if (filters.average_gpa != undefined && filters.average_gpa > 0) {
             params += "&average_gpa=" + filters.average_gpa;
 	}
 	$.get( "/students/"+ params, function( data ) {
