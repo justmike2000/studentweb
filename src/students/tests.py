@@ -83,8 +83,8 @@ class StudentTestCase(TestCase):
         """Asserts the students view with no parms returns full payload
         """
         request_factory = RequestFactory()
-        request = request_factory.get('/students/?first_name=First&average_gpa=1.0999999999999999',
-                                      data={'first_name': 'First', 'average_gpa': 1.0999999999999999})
+        request = request_factory.get('/students/?first_name=First&average_gpa=1.1',
+                                      data={'first_name': 'First', 'average_gpa': 1.1})
 
         response = json.loads(StudentView.as_view()(request)._container[0])
 
