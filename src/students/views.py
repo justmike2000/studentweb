@@ -44,7 +44,7 @@ class StudentView(View):
         data = {"students": [], "classes": []}
 
         for student in students.all():
-            if average_gpa is not None and round(student.average_gpa, 2) != round(float(average_gpa), 2):
+            if average_gpa is not None and round(student.average_gpa, 1) != round(float(average_gpa), 1):
                 continue
             data["students"].append(student.to_dict())
 
