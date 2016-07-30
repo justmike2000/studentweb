@@ -50,6 +50,7 @@ class Student(models.Model):
         student_dict["email"] = self.email
         student_dict["first"] = self.first_name
         student_dict["last"] = self.last_name
+        student_dict["average_gpa"] = round(self.average_gpa, 1)
 
         return student_dict
 
